@@ -1,31 +1,21 @@
 import { Controller, useForm, SubmitHandler } from "react-hook-form"
 import { Button, Input } from "antd";
-import { Link } from "react-router-dom";
-import { usePostRegisterMutation } from "src/entites/user/api";
+import { usePostLoginMutation } from "src/entites/user/api";
+import { LoginFormData } from "src/entites/user/model/types";
 import { useEffect } from "react";
 
-interface FormValues {
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
-export const Registration = () => {
+export const LoginForm = () => {
   const {
     handleSubmit,
     control,
     formState: { errors },
-    setError,
-    watch
-  } = useForm<FormValues>()
+    setError
+  } = useForm<LoginFormData>();
 
-  const [register, { error }] = usePostRegisterMutation();
+  const [login, { isLoading, error }] = usePostLoginMutation();
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    register({
-      email: data.email,
-      password: data.password
-    });
+  const onSubmit: SubmitHandler<LoginFormData> = (data) => {
+    login(data);
   };
 
   useEffect(() => {
@@ -35,12 +25,8 @@ export const Registration = () => {
       });
     }
   }, [error, setError])
-  
+
   return (
-    <div className="pt-36">
-    <h1 className="text-center">
-      Регистрация
-    </h1>
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 mt-8">
       <Controller
         name="email"
@@ -65,27 +51,11 @@ export const Registration = () => {
         render={({ field }) => <Input.Password {...field} placeholder="Введите пароль" size="large" />}
       />
       {errors.password && <span className="text-red-500">{errors.password.message}</span>}
-
-      <Controller
-        name="confirmPassword"
-        control={control}
-        rules={{
-          required: "Подтвердите пароль",
-          validate: value =>
-            value === watch('password') || "Пароли не совпадают",
-        }}
-        render={({ field }) => <Input.Password {...field} placeholder="Подтвердите пароль" size="large" />}
-      />
-      {errors.confirmPassword && <span className="text-red-500">{errors.confirmPassword.message}</span>}
       {errors.root && <span className="text-red-500">{errors.root.message}</span>}
 
-      <Button type="primary" size="large" htmlType="submit"> 
-        Создать
+      <Button type="primary" size="large" htmlType="submit" disabled={isLoading}> 
+        Войти
       </Button>
     </form>
-    <p className="text-right mt-4">
-      Уже есть аккаунт? <Link to='/login' className="text-cyan-700">Войти в аккаунт</Link> 
-    </p>
-  </div>
   )
 }

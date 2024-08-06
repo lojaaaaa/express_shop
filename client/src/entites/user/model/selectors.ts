@@ -6,3 +6,8 @@ export const selectIsAuth = (state: RootState) =>
 export const selectUser = (state: RootState) =>
   state.authSlice.user;
 
+export const selectUsers = (state: RootState) =>
+  state.authSlice.users;
+
+
+

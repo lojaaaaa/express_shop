@@ -5,11 +5,13 @@ import { IUser } from './types';
 export interface AuthState {
   isAuth: boolean;
   user: IUser | null;
+  users: IUser[];
 }
 
 const initialState: AuthState = {
   isAuth: false,
   user: null,
+  users: [],
 };
 
 export const authSlice = createSlice({
@@ -19,6 +21,7 @@ export const authSlice = createSlice({
     setLoggedOut: (state) => {
       state.isAuth = false;
       state.user = null;
+      state.users = [];
     },
   },
   extraReducers: (builder) => {
@@ -33,6 +36,9 @@ export const authSlice = createSlice({
     builder.addMatcher(authApi.endpoints.authCheck.matchFulfilled, (state, { payload }) => {
       state.isAuth = true;
       state.user = payload;
+    });
+    builder.addMatcher(authApi.endpoints.getUsers.matchFulfilled, (state, { payload }) => {
+      state.users = payload;
     });
   },
 });

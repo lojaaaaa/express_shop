@@ -1,0 +1,1 @@
+export { deviceSlice } from './slice';

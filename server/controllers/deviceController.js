@@ -52,7 +52,7 @@ class DeviceController {
   }
 
   async getOne (req, res) {
-    const { id } = req.body.params
+    const { id } = req.params
     const device = await Device.findOne({
       where: {
         id

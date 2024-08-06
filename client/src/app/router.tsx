@@ -1,18 +1,21 @@
 import { Route, Routes, useLocation } from "react-router-dom";
+
 import { selectIsAuth, selectUser } from "src/entites/user/model";
+import { ProtectedRoute } from "src/entites/user";
+
+import { Device } from "src/pages/device";
+import { Basket } from "src/pages/basket";
+import { Admin } from "src/pages/admin";
+import { Catalog } from "src/pages/catalog";
 import { ErrorPage } from "src/pages/error";
 import { Login } from "src/pages/login";
 import { Main } from "src/pages/main";
 import { Registration } from "src/pages/registration";
-import { Layout } from "./layout";
-import { ProtectedRoute } from "src/entites/user";
+
 import { useAppSelector } from "src/shared/lib";
-import { Admin } from "src/pages/admin";
+import { PrivateLayout, PublicLayout } from "./layout";
 
 export const Router = () => {
-
-  const baseLayout = <Layout width="max-w-screen-xl" />
-  const loginLayout = <Layout width="max-w-screen-sm" />;
 
   const location = useLocation();
   const isAuth = useAppSelector(selectIsAuth);
@@ -23,7 +26,7 @@ export const Router = () => {
   return (
     <>
       <Routes location={location}>
-        <Route element={baseLayout}>
+        <Route element={<PrivateLayout width="max-w-screen-lg"/>}>
           <Route 
             path='/'
             element={
@@ -31,7 +34,31 @@ export const Router = () => {
                 <Main />
               </ProtectedRoute> 
             }
-            />
+          />
+          <Route 
+            path='/basket'
+            element={
+              <ProtectedRoute isAuth={isAuth}>
+                <Basket />
+              </ProtectedRoute> 
+            }
+          />
+          <Route 
+            path='/devices'
+            element={
+              <ProtectedRoute isAuth={isAuth}>
+                <Catalog />
+              </ProtectedRoute> 
+            }
+          />
+          <Route 
+            path='/devices/:id'
+            element={
+              <ProtectedRoute isAuth={isAuth}>
+                <Device />
+              </ProtectedRoute> 
+            }
+          />
           {isAuth && isAdmin &&
             <Route 
               path='/admin' 
@@ -39,7 +66,7 @@ export const Router = () => {
             />
           }
         </Route>
-        <Route element={loginLayout}>        
+        <Route element={<PublicLayout width="max-w-screen-sm"/>}>        
           <Route
             path='/login'
             element={
