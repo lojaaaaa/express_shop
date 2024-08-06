@@ -3,4 +3,5 @@ export {
   usePostLoginMutation, 
   usePostRegisterMutation, 
   useAuthCheckQuery,
+  useGetUsersQuery
 } from './api'

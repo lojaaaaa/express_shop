@@ -1,26 +1,13 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IUser, LoginFormData, UserResponse } from '../model/types';
 import { jwtDecode } from 'jwt-decode'
+import { baseApi } from 'src/shared/api';
 import { setTokenLocalstorage } from 'src/shared/lib';
 
-const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://localhost:5000/api/user', 
-  prepareHeaders: (headers) => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
-    }
-    return headers;
-  }
-});
-
-export const authApi = createApi({
-  reducerPath: 'authApi',
-  baseQuery,
+export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     postLogin: builder.mutation<IUser, LoginFormData>({
       query: (credentials) => ({
-        url: '/login',
+        url: '/user/login',
         method: 'POST',
         body: credentials,
       }),
@@ -33,7 +20,7 @@ export const authApi = createApi({
 
     postRegister: builder.mutation<IUser, LoginFormData>({
       query: (credentials) => ({
-        url: '/registration',
+        url: '/user/registration',
         method: 'POST',
         body: credentials,
       }),
@@ -44,10 +31,9 @@ export const authApi = createApi({
       },
     }),
 
-
     authCheck: builder.query<IUser, void>({
       query: () => ({
-        url: '/auth',
+        url: '/user/auth',
         method: 'GET',
       }),
       transformResponse: (response: UserResponse) => {
@@ -55,7 +41,17 @@ export const authApi = createApi({
         return jwtDecode(token);
       },
     }),
+
+    getUsers: builder.query<IUser[], void>({
+      query: () => ({
+        url: '/user',
+        method: 'GET',
+      }),
+      transformResponse: (response: IUser[]) => {
+        return response
+      },
+    }),
   }),
 })
 
-export const { usePostLoginMutation, usePostRegisterMutation , useAuthCheckQuery } = authApi;
+export const { usePostLoginMutation, usePostRegisterMutation , useAuthCheckQuery, useGetUsersQuery } = authApi;

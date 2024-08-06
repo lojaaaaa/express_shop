@@ -1,5 +1,5 @@
 
-import { useAuthCheckQuery } from 'src/entites/user/api';
+import { useAuthCheckQuery } from 'src/entites/user';
 import { Router } from './router';
 
 export const App = () => {
